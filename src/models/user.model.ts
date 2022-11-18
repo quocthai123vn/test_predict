@@ -1,16 +1,20 @@
-import mongoose from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
 
-const Schema = mongoose.Schema;
+export class User {
+  @prop()
+  chainId?: number;
+  
+  @prop({ lowercase: true })
+  userAddress?: string;
 
-const user = new Schema(
-  {
-    userAddress: { type: String, require: true, lowercase: true, unique: true },
-    winNumber: { type: Number, default: 0 },
-    loseNumber: { type: Number, default: 0 },
-  },
-  {
-    timestamps: true,
-  }
-);
+  @prop({ default: 0 })
+  totalWin?: number;
 
-export default mongoose.model("user", user);
+  @prop({ default: 0 })
+  totalPrediction?: number;
+
+  @prop({ default: 0 })
+  totalReward?: number;
+}
+
+export const UserModel = getModelForClass(User);

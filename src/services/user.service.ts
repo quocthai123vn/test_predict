@@ -1,60 +1,85 @@
-import { createNewData } from "../util/mongoose.util";
-import userModel from "../models/user.model";
-import { User } from "../interfaces/user.interface";
-import { getTotalMatchOfUserService } from "./prediction.service";
+import { UserInfoResponse } from "../interfaces/user/user-info.response";
+import { UserModel } from "../models/user.model";
+import { User } from "../models/user.model";
+import {
+  LeaderBoardType,
+  UserRepository,
+} from "../interfaces/user/user.repository";
+import { PredictionService } from "./prediction.service";
 
-const findOneUserService = async (query: any) => {
-  const user: User = await userModel.findOne(query).lean();
-  return user;
-};
+export class UserService implements UserRepository {
+  public async getLeaderBoard(
+    type: LeaderBoardType,
+    limit: number
+  ): Promise<User[]> {
+    const query: any =
+      type === LeaderBoardType.HIGH_PREDICT
+        ? { totalPrediction: -1 }
+        : type === LeaderBoardType.HIGH_REWARD
+        ? { totalReward: -1 }
+        : type === LeaderBoardType.MOST_WIN
+        ? { totalWin: -1 }
+        : { totalLose: -1 };
 
-const createUserIfNotExistService = async (userAddress: string) => {
-  const isExist = await userModel.findOne({ userAddress });
-  const user: User = isExist
-    ? isExist
-    : await createNewData(userModel, { userAddress, nonce: Date.now() });
-  return user;
-};
+    const users = await UserModel.aggregate([
+      {
+        $project: {
+          chainId: "$chainId",
+          userAddress: "$userAddress",
+          totalWin: "$totalWin",
+          totalPrediction: "$totalPrediction",
+          totalReward: "$totalReward",
+          totalLose: {
+            $subtract: ["$totalPrediction", "$totalWin"],
+          },
+        },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $sort: query,
+      },
+    ]);
 
-const updateUserResultService = async (
-  winnerList: string[],
-  loserList: string[]
-) => {
-  await Promise.all([
-    userModel.updateMany(
-      { userAddress: winnerList },
-      { $inc: { winNumber: 1 } }
-    ),
-    userModel.updateMany(
-      { userAddress: loserList },
-      { $inc: { loseNumber: 1 } }
-    ),
-  ]);
-};
+    return users;
+  }
 
-const getUserInfoService = async (userAddress: string) => {
-  const user: User = await userModel.findOne({ userAddress }).lean();
-  const total = await getTotalMatchOfUserService(userAddress);
-  return {
-    userAddress,
-    total,
-    winRate: user.winNumber / total,
-    loseRate: user.loseNumber / total,
-  };
-};
+  public async findOne(userAddress: string, chainId: number): Promise<User> {
+    const user: User = await UserModel.findOne({ userAddress, chainId }).lean();
+    return user;
+  }
 
-const checkUserExistService = async (userAddress: string) => {
-  const user: User = await userModel
-    .findOne({ userAddress })
-    .select("_id")
-    .lean();
-  return user ? true : false;
-};
+  public async create(userAddress: string, chainId: number): Promise<User> {
+    const isExist = await UserModel.findOne({ userAddress, chainId });
+    const user: User = isExist
+      ? isExist
+      : await UserModel.create({ userAddress, chainId });
+    return user;
+  }
 
-export {
-  findOneUserService,
-  createUserIfNotExistService,
-  updateUserResultService,
-  getUserInfoService,
-  checkUserExistService,
-};
+  public async getInfo(
+    userAddress: string,
+    chainId: number
+  ): Promise<UserInfoResponse> {
+    const user: User = await this.findOne(userAddress, chainId);
+    const predictionService = new PredictionService();
+    const total = await predictionService.getUserMatchAmount(
+      chainId,
+      userAddress
+    );
+    return {
+      userAddress,
+      total,
+      winRate: user.totalWin ? user.totalWin / total : 0,
+      loseRate: user.totalWin ? (total - user.totalWin) / total : 0,
+    };
+  }
+
+  public async isExist(userAddress: string, chainId: number): Promise<boolean> {
+    const user: User = await UserModel.findOne({ userAddress, chainId })
+      .select("_id")
+      .lean();
+    return user ? true : false;
+  }
+}

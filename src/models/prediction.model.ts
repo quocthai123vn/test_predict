@@ -1,18 +1,25 @@
-import mongoose from "mongoose";
+import { getModelForClass, prop } from "@typegoose/typegoose";
+export class Prediction {
+  @prop()
+  chainId?: number;
 
-const Schema = mongoose.Schema;
+  @prop()
+  epoch?: number;
 
-const prediction = new Schema(
-  {
-    matchId: { type: mongoose.Types.ObjectId, require: true },
-    userAddress: { type: String, require: true },
-    amount: { type: Number, required: true },
-    position: { type: Number, required: true },
-    result: { type: Number, default: 0 },
-  },
-  {
-    timestamps: true,
-  }
-);
+  @prop({ lowercase: true })
+  userAddress?: string;
 
-export default mongoose.model("prediction", prediction);
+  @prop()
+  amount?: number;
+
+  @prop()
+  position?: number;
+
+  @prop({ default: 0 })
+  result?: number;
+
+  @prop({default: 0})
+  amountReward?: number;
+}
+
+export const PredictionModel = getModelForClass(Prediction);

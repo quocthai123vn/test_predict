@@ -2,7 +2,7 @@ const PREDICT_RESULT: { [key: number]: string } = {
   0: "Waiting for result",
   1: "Win",
   2: "Lose",
-  3: "tie",
+  3: "draw",
 };
 
 const MATCH_STATUS: { [key: number]: string } = {

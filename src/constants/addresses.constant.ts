@@ -23,7 +23,7 @@ const Staking = {
 };
 
 const PredictionWithToken = {
-  97: "0x4A564c996375e745E7A85d752cE8f1AC0D86d7B8",
+  97: "0x31E7f02b7877Fa87C78d29cF46E49B9632f09B14",
 };
 
 const PredictionWithSSP = {

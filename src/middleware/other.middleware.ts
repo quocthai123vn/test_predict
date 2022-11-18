@@ -44,19 +44,5 @@ const checkPageMiddleware = (
   return next();
 };
 
-const checkTestKeyMiddleware = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const testKey = req.query.testKey;
-  if (!testKey) {
-    return res.status(400).json({ message: STATUS_CODE[400] });
-  }
-  if (testKey !== TEST_KEY) {
-    return res.status(400).json({ message: STATUS_CODE[400] });
-  }
-  return next();
-};
 
-export { checkPageMiddleware, checkTestKeyMiddleware };
+export { checkPageMiddleware };

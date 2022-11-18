@@ -2,25 +2,31 @@
   "name": "prediction_api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "index.ts",
+  "engines": {
+    "npm": "8.1.2",
+    "node": "v16.13.2"
+  },
   "scripts": {
-    "dev": "nodemon src/index.ts",
+    "start": "nodemon src/index.ts",
     "clean": "rimraf dist tsconfig.schema.json tsconfig.schemastore-schema.json tsconfig.tsbuildinfo tests/ts-node-packed.tgz",
     "rebuild": "npm run clean && npm run build",
     "build": "tsc --build",
-    "start": "node public/index.js",
+    "serve": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@typegoose/typegoose": "^9.12.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
-    "mongoose": "^6.6.1",
+    "mongoose": "^6.7.2",
     "nodemon": "^2.0.20",
-    "os": "^0.1.2"
+    "os": "^0.1.2",
+    "ts-node": "^10.9.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
