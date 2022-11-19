@@ -28,6 +28,7 @@ export class UserService implements UserRepository {
           userAddress: "$userAddress",
           totalWin: "$totalWin",
           totalPrediction: "$totalPrediction",
+          amountPrediction: "$amountPrediction",
           totalReward: "$totalReward",
           totalLose: {
             $subtract: ["$totalPrediction", "$totalWin"],

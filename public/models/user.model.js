@@ -32,6 +32,10 @@ __decorate([
 __decorate([
     (0, typegoose_1.prop)({ default: 0 }),
     __metadata("design:type", Number)
+], User.prototype, "amountPrediction", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ default: 0 }),
+    __metadata("design:type", Number)
 ], User.prototype, "totalReward", void 0);
 exports.User = User;
 exports.UserModel = (0, typegoose_1.getModelForClass)(User);

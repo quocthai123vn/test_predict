@@ -27,7 +27,7 @@ class PredictionService {
                     chainId: chainId,
                     userAddress: userAddress
                 }, {
-                    $inc: { totalPrediction: amount }
+                    $inc: { amountPrediction: amount, totalPrediction: 1 }
                 })
             ]);
         });

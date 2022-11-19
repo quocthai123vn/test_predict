@@ -24,7 +24,7 @@ export class PredictionService implements PredictionRepository {
         userAddress: userAddress
       },
       {
-        $inc: { totalPrediction: amount }
+        $inc: { amountPrediction: amount, totalPrediction: 1 }
       }
     )
     ]);

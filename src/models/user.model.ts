@@ -14,6 +14,9 @@ export class User {
   totalPrediction?: number;
 
   @prop({ default: 0 })
+  amountPrediction?: number;
+
+  @prop({ default: 0 })
   totalReward?: number;
 }
 
